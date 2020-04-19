@@ -2,11 +2,15 @@ import hashlib
 import numpy as np
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
+import warnings
 
 from termcolor import colored
 from scipy.ndimage.filters import maximum_filter
 from scipy.ndimage.morphology import (generate_binary_structure, iterate_structure, binary_erosion)
 from operator import itemgetter
+
+warnings.filterwarnings("ignore")
+
 
 IDX_FREQ_I = 0
 IDX_TIME_J = 1
@@ -88,7 +92,7 @@ def fingerprint(channel_samples, Fs=DEFAULT_FS,
       plt.show()
 
     # apply log transform since specgram() returns linear array
-    arr2D[arr2D == 0] = 10
+    #arr2D[arr2D == 0] = 10
     arr2D = 10 * np.log10(arr2D) # calculates the base 10 logarithm for all elements of arr2D
     arr2D[arr2D == -np.inf] = 0  # replace infs with zeros
 
@@ -165,6 +169,7 @@ def generate_hashes(peaks, fan_value=DEFAULT_FAN_VALUE):
 
           # check if delta is between min & max
           if t_delta >= MIN_HASH_TIME_DELTA and t_delta <= MAX_HASH_TIME_DELTA:
+            #updated code to remove  "Unicode-objects must be encoded before hashing"
             h = hashlib.sha1(b"%s|%s|%s" % (str(freq1).encode('utf-8'), str(freq2).encode('utf-8'), str(t_delta).encode('utf-8')))
             yield (h.hexdigest()[0:FINGERPRINT_REDUCTION], t1)
 
